@@ -78,7 +78,7 @@ var preJWPlayer = (function(document){
             preJWPlayerElementList[name] = {
                 element: document.getElementById(name).parentNode,
                 videoElement: document.createElement('video'),
-                clickHandler: function(e){ _preJWPlayerClickHandler(name); clickHandler(e); }
+                clickHandler: function(e){ _preJWPlayerClickHandler(name); clickHandler(name, e); }
             };
 
             preJWPlayerElementList[name].element.classList.add('preJWPlayer');
