@@ -69,7 +69,7 @@ var preJWPlayer = (function(document){
      * @function createPreJWPlayerElement
      * @public
      */
-    var createPreJWPlayerElement = function(name){
+    var createPreJWPlayerElement = function(name, clickHandler){
 
         document.addEventListener('DOMContentLoaded', function(){
             
@@ -77,14 +77,12 @@ var preJWPlayer = (function(document){
 
             preJWPlayerElementList[name] = {
                 element: document.getElementById(name).parentNode,
-                videoElement: document.createElement('video')
+                videoElement: document.createElement('video'),
+                clickHandler: function(e){ _preJWPlayerClickHandler(name); clickHandler(e); }
             };
 
             preJWPlayerElementList[name].element.classList.add('preJWPlayer');
-            preJWPlayerElementList[name].element.addEventListener('click', function(e){
-
-                _preJWPlayerClickHandler(name);
-            });
+            preJWPlayerElementList[name].element.addEventListener('click', preJWPlayerElementList[name].clickHandler);
         });
     };
 
@@ -96,7 +94,7 @@ var preJWPlayer = (function(document){
     var removePreJWPlayerElement = function(name){
         
         preJWPlayerElementList[name].element.classList.remove(className, 'preJWPlayer');
-        preJWPlayerElementList[name].element.removeEventListener('click', _preJWPlayerClickHandler);
+        preJWPlayerElementList[name].element.removeEventListener('click', preJWPlayerElementList[name].clickHandler);
     };
 
 
