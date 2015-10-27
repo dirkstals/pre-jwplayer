@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+    
+    <meta charset="utf-8">
+
+    <title>Demo</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+
+    #video{
+        display: block;
+        width: 640px;
+        height: 360px;
+    }
+
+    .preJWPlayer > *{
+        background: gray;
+    }
+
+    .preJWPlayer.buffering > *{
+        background: red;
+    }
+
+    </style>
+
+
+    <!-- ASYNCHRONOUS SCRIPTS -->
+    <script async src="http://content.jwplatform.com/libraries/QKO2jbyL.js"></script>
+
+
+    <!-- SYNCHRONOUS SCRIPTS -->
+    <script src="scripts/scriptloader.min.js"></script>
+    <script src="scripts/prejw.min.js"></script>
+    <script src="scripts/app.js"></script>
+
+</head>
+
+<body>
+
+    <h1>Pre JWPlayer Script</h1>
+
+    <div class="videowrapper">
+
+        <div id="video"></div>
+
+    </div>
+
+</body>         
+</html>
