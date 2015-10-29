@@ -2,6 +2,7 @@ var preJWPlayer = (function(document){
 
     var preJWPlayerElementList = {},
         nameSortList = [],
+        currentlyUsedVideoElement = null,
         oldCreateElement,
         startJWPlayerPlaying = false,
         startJWPlayerPlayingName,
@@ -22,7 +23,9 @@ var preJWPlayer = (function(document){
             typeof arguments.callee.caller.prototype.__proto__.play === 'function'){
 
             // serve our own video element
-            element = preJWPlayerElementList[nameSortList.shift()].videoElement;
+            element = preJWPlayerElementList[currentlyUsedVideoElement || nameSortList.shift()].videoElement;
+
+            currentlyUsedVideoElement = null;
         }else{
 
             // create the element with the native function
@@ -78,7 +81,17 @@ var preJWPlayer = (function(document){
             preJWPlayerElementList[name] = {
                 element: document.getElementById(name).parentNode,
                 videoElement: document.createElement('video'),
-                clickHandler: function(e){ _preJWPlayerClickHandler(name); clickHandler(name, e); }
+                clickHandler: function(e){ 
+                    
+                    _preJWPlayerClickHandler(name); 
+
+                    if(typeof clickHandler === 'function'){
+                        
+                        currentlyUsedVideoElement = name;
+
+                        clickHandler(name, e); 
+                    }
+                }
             };
 
             preJWPlayerElementList[name].element.classList.add('preJWPlayer');
