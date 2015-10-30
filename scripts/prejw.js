@@ -122,6 +122,16 @@ var preJWPlayer = (function(document){
 
 
     /**
+     * @function getPlayingName
+     * @public
+     */
+    var getPlayingName = function(){
+
+        return (startJWPlayerPlaying && startJWPlayerPlayingName) ? startJWPlayerPlayingName : false;
+    };
+
+
+    /**
      * @function getPreJWPlayerElement
      * @public
      */
@@ -142,6 +152,7 @@ var preJWPlayer = (function(document){
         createPreJWPlayerElement: createPreJWPlayerElement,
         removePreJWPlayerElement: removePreJWPlayerElement,
         getPreJWPlayerElement: getPreJWPlayerElement,
+        getPlayingName: getPlayingName,
         startPlaying: startPlaying
     };
     
