@@ -74,8 +74,12 @@ var preJWPlayer = (function(document){
      */
     var createPreJWPlayerElement = function(name, clickHandler){
 
-        document.addEventListener('DOMContentLoaded', function(){
-            
+        /**
+         * @function _onDocumentLoaded
+         * @private
+         */ 
+        var _onDocumentLoaded = function(){
+
             nameSortList.push(name);
 
             preJWPlayerElementList[name] = {
@@ -96,7 +100,16 @@ var preJWPlayer = (function(document){
 
             preJWPlayerElementList[name].element.classList.add('preJWPlayer');
             preJWPlayerElementList[name].element.addEventListener('click', preJWPlayerElementList[name].clickHandler);
-        });
+        };
+
+
+        if (document.readyState == "complete" || document.readyState == "loaded"){
+
+            _onDocumentLoaded();
+        }else{
+
+            document.addEventListener('DOMContentLoaded', _onDocumentLoaded);
+        }
     };
 
 
