@@ -49,11 +49,11 @@
             left: -50px;
         }
 
-        .preJWPlayer.buffering .playbutton{
+        .playbutton.buffering{
             border-color: transparent; 
         }
 
-        .preJWPlayer.buffering .playbutton:before{
+        .playbutton.buffering:before{
             border-style: dashed; 
             -webkit-animation: spin 2s infinite linear;
         }
@@ -68,12 +68,6 @@
 
     <!-- ASYNCHRONOUS SCRIPTS -->
     <script async src="http://content.jwplatform.com/libraries/QKO2jbyL.js"></script>
-
-
-    <!-- SYNCHRONOUS SCRIPTS -->
-    <script src="scripts/scriptloader.min.js"></script>
-    <script src="scripts/prejw.min.js"></script>
-    <script src="scripts/app.js"></script>
 
 </head>
 
@@ -90,6 +84,7 @@
 
     </div>
 
+    <a href="#" id="play">Play the video</a>
 
     <div class="videowrapper">
 
@@ -99,6 +94,10 @@
         </div>
 
     </div>
+
+    <!-- SYNCHRONOUS SCRIPTS -->
+    <script src="scripts/prejw.js"></script>
+    <script src="scripts/app.js"></script>
 
 </body>         
 </html>
