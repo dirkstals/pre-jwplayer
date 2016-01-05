@@ -38,7 +38,7 @@
         playerInstance2 = prejwplayer(video2DOMElement);
         playerInstance2.setup(JWPlayerConfig['video2']);
 
-        playerInstance3 = prejwplayer(playDOMElement, videoDOMElement);
+        playerInstance3 = prejwplayer();
         playerInstance3.setup(JWPlayerConfig['video']);
     };
 
@@ -84,7 +84,15 @@
     var _playDOMElementClickHandler = function(e){
 
         videoDOMElement.querySelector('.playbutton').classList.add('buffering');
-        setTimeout(playerInstance1.play, 1000);
+
+        playerInstance1.activate();
+
+        setTimeout(function()
+            {
+                playerInstance1.play(videoDOMElement);
+            }, 
+            1000
+        );
     }
 
 

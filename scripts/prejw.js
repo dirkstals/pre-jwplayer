@@ -2,8 +2,7 @@
 
     var preJWPlayer = function(){
 
-        var clickElement = arguments[0],
-            videoElement = arguments[1] ? arguments[1] : clickElement,
+        var videoElement = arguments[0],
             jwplayerInstance,
             jwplayerOptions,
             jwplayerTimeout,
@@ -38,26 +37,6 @@
 
 
         /**
-         * @function _startJWPlayer
-         * @private
-         */
-        var _startJWPlayer = function(){
-
-            if(typeof jwplayer == 'undefined'){
-                
-                jwplayerTimeout = setTimeout(_startJWPlayer, 10);
-            }else{
-
-                document.createElement = customCreateElement;
-
-                jwplayerInstance = jwplayer(videoElement);
-                jwplayerInstance.setup(jwplayerOptions);
-                jwplayerInstance.on('ready', _JWPlayerReadyHandler);
-            }
-        };
-
-
-        /**
          * @function _JWPlayerReadyHandler
          * @private
          */
@@ -68,17 +47,6 @@
             this.play();  
 
             preJWPlayerInstance = jwplayerInstance;
-        };
-
-
-        /**
-         * @function activateDummyElement
-         * @private
-         */
-        var _activatePreJWPlayerElement = function(){
-            
-            videoTagElement.play();
-            videoTagElement.pause();
         };
 
 
@@ -104,14 +72,33 @@
 
 
         /**
+         * @function activate
+         * @public
+         */
+        var activate = function(){
+            
+            videoTagElement.play();
+            videoTagElement.pause();
+        };
+
+
+        /**
          * @function play
          * @public
          */
-        var play = function(){
+        var play = function(videoDOMElement){
 
-            _activatePreJWPlayerElement();
+            if(typeof jwplayer == 'undefined'){
+                
+                jwplayerTimeout = setTimeout(_startJWPlayer, 10);
+            }else{
 
-            _startJWPlayer();
+                document.createElement = customCreateElement;
+
+                jwplayerInstance = jwplayer(videoDOMElement ? videoDOMElement : videoElement);
+                jwplayerInstance.setup(jwplayerOptions);
+                jwplayerInstance.on('ready', _JWPlayerReadyHandler);
+            }
         };
 
 
@@ -122,6 +109,7 @@
         var stop = function(){
 
             clearTimeout(jwplayerTimeout);
+            jwplayerInstance.remove();
         };
 
 
@@ -129,6 +117,7 @@
 
         return {
             setup: setup,
+            activate: activate,
             play: play,
             stop: stop
         };
