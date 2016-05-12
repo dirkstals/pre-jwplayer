@@ -1,159 +1,128 @@
-var preJWPlayer = (function(document){
+(function(document){
 
-    var preJWPlayerElementList = {},
-        nameSortList = [],
-        currentlyUsedVideoElement = null,
-        oldCreateElement,
-        startJWPlayerPlaying = false,
-        startJWPlayerPlayingName,
-        className = 'buffering';
+    var preJWPlayer = function(){
 
-    /**
-     * @function customCreateElement
-     * @public
-     */
-    var customCreateElement = function(tagName){
-
-        var element;
-
-        // Check if jwPlayer is calling the video
-        if(tagName === 'video' && arguments.callee.caller &&
-            arguments.callee.caller.prototype &&
-            arguments.callee.caller.prototype.__proto__ &&
-            typeof arguments.callee.caller.prototype.__proto__.play === 'function'){
-
-            // serve our own video element
-            element = preJWPlayerElementList[currentlyUsedVideoElement || nameSortList.shift()].videoElement;
-
-            currentlyUsedVideoElement = null;
-        }else{
-
-            // create the element with the native function
-            element = oldCreateElement.apply(document, arguments);
-        }
-        
-        return element;
-    };
+        var videoElement = arguments[0],
+            jwplayerInstance,
+            jwplayerOptions,
+            jwplayerTimeout,
+            videoTagElement,
+            preJWPlayerInstance = this;
 
 
-    /**
-     * @function _preJWPlayerClickHandler
-     * @private
-     */
-    var _preJWPlayerClickHandler = function(name){
+        /**
+         * @function customCreateElement
+         * @public
+         */
+        var customCreateElement = function(tagName){
 
-        if(preJWPlayerElementList[startJWPlayerPlayingName] && startJWPlayerPlayingName !== name){
+            var element;
 
-            preJWPlayerElementList[startJWPlayerPlayingName].element.classList.remove(className);
-        }
-        
-        startJWPlayerPlaying = (preJWPlayerElementList[startJWPlayerPlayingName] && startJWPlayerPlayingName === name) ? !startJWPlayerPlaying : true;
-        
-        preJWPlayerElementList[name].element.classList.toggle(className, startJWPlayerPlaying);
+            // Check if jwPlayer is calling the video
+            if(tagName === 'video' && arguments.callee.caller &&
+                arguments.callee.caller.prototype &&
+                arguments.callee.caller.prototype.__proto__ &&
+                typeof arguments.callee.caller.prototype.__proto__.play === 'function'){
 
-        startJWPlayerPlayingName = name;
+                // serve our own video element
+                element = videoTagElement;
+            }else{
 
-        _activatePreJWPlayerElement(name);
-    };
-
-
-    /**
-     * @function activateDummyElement
-     * @private
-     */
-    var _activatePreJWPlayerElement = function(name){
-        
-        preJWPlayerElementList[name].videoElement.play();
-        preJWPlayerElementList[name].videoElement.pause();
-    };
-
-
-    /**
-     * @function createPreJWPlayerElement
-     * @public
-     */
-    var createPreJWPlayerElement = function(name, clickHandler){
-
-        document.addEventListener('DOMContentLoaded', function(){
+                // create the element with the native function
+                element = oldCreateElement.apply(document, arguments);
+            }
             
-            nameSortList.push(name);
-
-            preJWPlayerElementList[name] = {
-                element: document.getElementById(name).parentNode,
-                videoElement: document.createElement('video'),
-                clickHandler: function(e){ 
-                    
-                    _preJWPlayerClickHandler(name); 
-
-                    if(typeof clickHandler === 'function'){
-                        
-                        currentlyUsedVideoElement = name;
-
-                        clickHandler(name, e); 
-                    }
-                }
-            };
-
-            preJWPlayerElementList[name].element.classList.add('preJWPlayer');
-            preJWPlayerElementList[name].element.addEventListener('click', preJWPlayerElementList[name].clickHandler);
-        });
-    };
+            return element;
+        };
 
 
-    /**
-     * @function removePreJWPlayerElement
-     * @public
-     */
-    var removePreJWPlayerElement = function(name){
+        /**
+         * @function _JWPlayerReadyHandler
+         * @private
+         */
+        var _JWPlayerReadyHandler = function(){
         
-        preJWPlayerElementList[name].element.classList.remove(className, 'preJWPlayer');
-        preJWPlayerElementList[name].element.removeEventListener('click', preJWPlayerElementList[name].clickHandler);
-    };
+            document.createElement = oldCreateElement;
+
+            this.play();  
+
+            preJWPlayerInstance = jwplayerInstance;
+        };
 
 
-    /**
-     * @function startPlaying
-     * @public
-     */
-    var startPlaying = function(name){
-
-        return !!(startJWPlayerPlaying && startJWPlayerPlayingName === name);
-    };
-
-
-    /**
-     * @function getPlayingName
-     * @public
-     */
-    var getPlayingName = function(){
-
-        return (startJWPlayerPlaying && startJWPlayerPlayingName) ? startJWPlayerPlayingName : false;
-    };
+        /**
+         * @function _init
+         * @public
+         */
+        var _init = function(){
+                
+            oldCreateElement = document.createElement;
+            videoTagElement = document.createElement('video');
+        };
 
 
-    /**
-     * @function getPreJWPlayerElement
-     * @public
-     */
-    var getPreJWPlayerElement = function(name){
+        /**
+         * @function setup
+         * @public
+         */
+        var setup = function(options){
 
-        return preJWPlayerElementList[name] ? preJWPlayerElementList[name].element : null;
-    };
-
-
-    /**
-     * swap document.createElement with custom function
-     */
-    oldCreateElement = document.createElement;
-    document.createElement = customCreateElement;
+            jwplayerOptions = options;
+        };
 
 
-    return {
-        createPreJWPlayerElement: createPreJWPlayerElement,
-        removePreJWPlayerElement: removePreJWPlayerElement,
-        getPreJWPlayerElement: getPreJWPlayerElement,
-        getPlayingName: getPlayingName,
-        startPlaying: startPlaying
-    };
+        /**
+         * @function activate
+         * @public
+         */
+        var activate = function(){
+            
+            videoTagElement.play();
+            videoTagElement.pause();
+        };
+
+
+        /**
+         * @function play
+         * @public
+         */
+        var play = function(videoDOMElement){
+
+            if(typeof jwplayer == 'undefined'){
+                
+                jwplayerTimeout = setTimeout(play, 10);
+            }else{
+
+                document.createElement = customCreateElement;
+
+                jwplayerInstance = jwplayer(videoDOMElement ? videoDOMElement : videoElement);
+                jwplayerInstance.setup(jwplayerOptions);
+                jwplayerInstance.on('ready', _JWPlayerReadyHandler);
+            }
+        };
+
+
+        /**
+         * @function stop
+         * @public
+         */
+        var stop = function(){
+
+            clearTimeout(jwplayerTimeout);
+            jwplayerInstance.remove();
+        };
+
+
+        _init();
+
+        return {
+            setup: setup,
+            activate: activate,
+            play: play,
+            stop: stop
+        };
+    }
+
+    window.prejwplayer = window.prejwplayer ? window.prejwplayer : preJWPlayer;
     
 })(document);
