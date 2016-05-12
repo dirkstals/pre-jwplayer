@@ -90,7 +90,7 @@
 
             if(typeof jwplayer == 'undefined'){
                 
-                jwplayerTimeout = setTimeout(_startJWPlayer, 10);
+                jwplayerTimeout = setTimeout(play, 10);
             }else{
 
                 document.createElement = customCreateElement;
